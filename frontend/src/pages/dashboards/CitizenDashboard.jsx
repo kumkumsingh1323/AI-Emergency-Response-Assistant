@@ -32,18 +32,36 @@ export default function CitizenDashboard() {
           </h3>
           <ul className="space-y-3">
             <li className="flex justify-between items-center p-3 bg-gray-50 rounded-xl border border-gray-100">
-              <span className="font-bold text-sm">Police</span>
-              <span className="font-black text-brand-danger">112</span>
+              <div>
+                <span className="font-bold text-sm block text-brand-navy">Police</span>
+                <span className="font-black text-brand-danger text-lg tracking-wider">112</span>
+              </div>
+              <a href="tel:112" className="px-4 py-2 bg-brand-danger text-white rounded-lg font-bold shadow-md shadow-red-500/20 hover:bg-red-600 transition-colors flex items-center gap-2 hover:-translate-y-0.5">
+                <PhoneCall size={14} /> Call
+              </a>
             </li>
             <li className="flex justify-between items-center p-3 bg-gray-50 rounded-xl border border-gray-100">
-              <span className="font-bold text-sm">Ambulance</span>
-              <span className="font-black text-brand-danger">108</span>
+              <div>
+                <span className="font-bold text-sm block text-brand-navy">Ambulance</span>
+                <span className="font-black text-brand-danger text-lg tracking-wider">108</span>
+              </div>
+              <a href="tel:108" className="px-4 py-2 bg-brand-danger text-white rounded-lg font-bold shadow-md shadow-red-500/20 hover:bg-red-600 transition-colors flex items-center gap-2 hover:-translate-y-0.5">
+                <PhoneCall size={14} /> Call
+              </a>
             </li>
             <li className="flex justify-between items-center p-3 bg-gray-50 rounded-xl border border-gray-100">
-              <span className="font-bold text-sm">Fire</span>
-              <span className="font-black text-brand-danger">101</span>
+              <div>
+                <span className="font-bold text-sm block text-brand-navy">Fire</span>
+                <span className="font-black text-brand-danger text-lg tracking-wider">101</span>
+              </div>
+              <a href="tel:101" className="px-4 py-2 bg-brand-danger text-white rounded-lg font-bold shadow-md shadow-red-500/20 hover:bg-red-600 transition-colors flex items-center gap-2 hover:-translate-y-0.5">
+                <PhoneCall size={14} /> Call
+              </a>
             </li>
           </ul>
+          <p className="mt-4 text-xs font-medium text-gray-500 leading-relaxed text-center">
+            * Call buttons open the phone dialer on supported mobile devices. If you are on a laptop, please dial manually.
+          </p>
         </div>
       </div>
 
