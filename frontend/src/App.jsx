@@ -51,13 +51,6 @@ function AppLayout({ children }) {
 
   return (
     <div className="flex flex-col h-screen font-sans overflow-hidden">
-      {/* DEMO MODE Banner */}
-      <div className="bg-gradient-to-r from-amber-400/90 to-orange-400/90 text-white text-[11px] font-black uppercase tracking-widest text-center py-1.5 px-4 flex items-center justify-center gap-2 z-50 shrink-0">
-        <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-        Demo Mode — Sample Data · No real backend · AI features simulated
-        <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-      </div>
-
       <div className="flex flex-1 bg-gradient-to-br from-brand-bg via-white to-pink-50 overflow-hidden min-h-0">
         {/* SIDEBAR */}
         <aside className="w-[280px] bg-white/60 backdrop-blur-xl border-r border-white/50 flex-col hidden md:flex shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-20 shrink-0">
