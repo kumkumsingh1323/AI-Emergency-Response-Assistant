@@ -1,5 +1,5 @@
 import { useData } from '../context/DataContext';
-import { BarChart3, TrendingUp, Users, Activity, Clock, Target, AlertTriangle, CheckCircle, Database } from 'lucide-react';
+import { BarChart3, TrendingUp, Users, Activity, Clock, Target, AlertTriangle, CheckCircle, Database, RotateCcw } from 'lucide-react';
 
 // ─── Demo Data Badge ──────────────────────────────────────────────────────────
 function DemoBadge() {
@@ -13,13 +13,23 @@ function DemoBadge() {
 
 // ─── Simple CSS bar chart from real data ──────────────────────────────────────
 function BarChart({ data, maxVal }) {
+  const hasData = data.some(d => d.value > 0);
+  if (!hasData) {
+    return (
+      <div className="h-40 flex flex-col items-center justify-center text-center gap-2">
+        <span className="text-4xl">📊</span>
+        <p className="text-sm font-bold text-gray-400">No data yet</p>
+        <p className="text-xs text-gray-400">Data will appear as incidents are logged.</p>
+      </div>
+    );
+  }
   return (
     <div className="h-40 flex items-end justify-between gap-2 border-b border-gray-100 pb-2 relative mt-2">
       <div className="absolute inset-x-0 bottom-1/4 border-b border-gray-50 border-dashed z-0" />
       <div className="absolute inset-x-0 bottom-2/4 border-b border-gray-50 border-dashed z-0" />
       <div className="absolute inset-x-0 bottom-3/4 border-b border-gray-50 border-dashed z-0" />
       {data.map(({ label, value, color }, i) => {
-        const pct = maxVal === 0 ? 0 : Math.max(4, Math.round((value / maxVal) * 100));
+        const pct = maxVal === 0 ? 0 : Math.max(8, Math.round((value / maxVal) * 100));
         return (
           <div key={i} className="flex-1 flex flex-col items-center gap-1 relative z-10 group">
             <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-brand-navy text-white text-[10px] font-bold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
@@ -37,7 +47,7 @@ function BarChart({ data, maxVal }) {
 }
 
 export default function Analytics() {
-  const { incidents } = useData() || {};
+  const { incidents, resetData } = useData() || {};
 
   if (!incidents || !Array.isArray(incidents)) {
     return (
@@ -57,12 +67,12 @@ export default function Analytics() {
   const highPriority = incidents.filter(i => i.urgency === 'HIGH' || i.urgency === 'CRITICAL').length;
   const verified = incidents.filter(i => i.verificationStatus === 'Verified').length;
 
-  // Severity distribution
+  // Severity distribution - normalize to uppercase for safe comparison
   const severityData = [
-    { label: 'Critical', value: incidents.filter(i => i.urgency === 'CRITICAL').length, color: '#ef4444' },
-    { label: 'High',     value: incidents.filter(i => i.urgency === 'HIGH').length,     color: '#f97316' },
-    { label: 'Medium',   value: incidents.filter(i => i.urgency === 'MEDIUM').length,   color: '#f59e0b' },
-    { label: 'Low',      value: incidents.filter(i => i.urgency === 'LOW').length,      color: '#10b981' },
+    { label: 'Critical', value: incidents.filter(i => (i.urgency || '').toUpperCase() === 'CRITICAL').length, color: '#ef4444' },
+    { label: 'High',     value: incidents.filter(i => (i.urgency || '').toUpperCase() === 'HIGH').length,     color: '#f97316' },
+    { label: 'Medium',   value: incidents.filter(i => (i.urgency || '').toUpperCase() === 'MEDIUM').length,   color: '#f59e0b' },
+    { label: 'Low',      value: incidents.filter(i => (i.urgency || '').toUpperCase() === 'LOW').length,      color: '#10b981' },
   ];
   const maxSev = Math.max(...severityData.map(d => d.value), 1);
 
@@ -99,7 +109,15 @@ export default function Analytics() {
             </p>
           </div>
         </div>
-        <DemoBadge />
+        <div className="flex items-center gap-3">
+          <DemoBadge />
+          <button
+            onClick={() => { if (window.confirm('Reset all data back to the original sample incidents?')) resetData(); }}
+            className="inline-flex items-center gap-1.5 bg-gray-50 border border-gray-200 text-gray-500 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-colors"
+          >
+            <RotateCcw size={11} /> Reset Data
+          </button>
+        </div>
       </div>
 
       {/* KPI Cards */}
