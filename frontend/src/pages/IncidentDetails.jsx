@@ -138,6 +138,18 @@ export default function IncidentDetails() {
               </div>
             )}
 
+            {/* Attached Evidence */}
+            {incident.imageUrl && (
+              <div>
+                <h3 className="text-sm font-black text-brand-navy uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-brand-accent"></span> Attached Evidence
+                </h3>
+                <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm max-w-lg">
+                  <img src={incident.imageUrl} alt="Incident Evidence" className="w-full h-auto object-cover" />
+                </div>
+              </div>
+            )}
+
             {/* Timeline */}
             <div className="pt-6 border-t border-white/60">
               <h3 className="text-sm font-black text-brand-navy uppercase tracking-widest mb-8">Incident Timeline</h3>

@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { useData } from '../../context/DataContext';
 import IncidentCard from '../../components/IncidentCard';
 import { Users, Activity, CheckCircle, AlertTriangle } from 'lucide-react';
 
 export default function TeamLeaderDashboard() {
-  const { incidents } = useData() || {};
+  const { incidents, updateIncidentStatus } = useData() || {};
+  const [assignments, setAssignments] = useState({});
 
   if (!incidents) return null;
 
@@ -52,18 +54,35 @@ export default function TeamLeaderDashboard() {
               <div className="flex-1 w-full">
                 <p className="font-bold text-brand-navy">{incident.title || incident.incidentType}</p>
                 <p className="text-xs text-gray-500">{incident.location} • {incident.urgency}</p>
+                {incident.assignedTo && <p className="text-xs font-bold text-brand-accent mt-1">Currently Assigned: {incident.assignedTo}</p>}
               </div>
               <div className="flex-shrink-0 w-full md:w-auto">
-                <select className="w-full md:w-48 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-brand-primary">
-                  <option>Assign Responder...</option>
-                  <option value="john">John Doe (Available)</option>
-                  <option value="sarah">Sarah Smith (Available)</option>
-                  <option value="mike">Mike Johnson (Deployed)</option>
-                  <option value="unit4">Rescue Unit 4 (Available)</option>
+                <select 
+                  value={assignments[incident._id] || incident.assignedTo || ''} 
+                  onChange={(e) => setAssignments(prev => ({...prev, [incident._id]: e.target.value}))}
+                  className="w-full md:w-48 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:border-brand-primary"
+                >
+                  <option value="">Assign Responder...</option>
+                  <option value="Demo Responder">Demo Responder (Available)</option>
+                  <option value="John Doe">John Doe (Available)</option>
+                  <option value="Sarah Smith">Sarah Smith (Available)</option>
+                  <option value="Mike Johnson">Mike Johnson (Deployed)</option>
+                  <option value="Rescue Unit 4">Rescue Unit 4 (Available)</option>
                 </select>
               </div>
               <div className="flex-shrink-0 w-full md:w-auto">
-                <button onClick={() => alert('[DEMO] Responder assigned.')} className="w-full md:w-auto px-4 py-2 bg-brand-soft text-brand-accent font-bold text-sm rounded-lg hover:bg-pink-100 transition-colors">
+                <button 
+                  onClick={() => {
+                    const responder = assignments[incident._id];
+                    if (responder) {
+                      updateIncidentStatus(incident._id, { assignedTo: responder });
+                      alert(`Responder ${responder} assigned successfully!`);
+                    } else {
+                      alert('Please select a responder first.');
+                    }
+                  }} 
+                  className="w-full md:w-auto px-4 py-2 bg-brand-soft text-brand-accent font-bold text-sm rounded-lg hover:bg-pink-100 transition-colors"
+                >
                   Assign
                 </button>
               </div>

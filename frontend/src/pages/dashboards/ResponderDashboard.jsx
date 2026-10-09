@@ -5,13 +5,13 @@ import MapView from '../../components/MapView';
 import { AlertCircle, Activity, Truck, MapPin } from 'lucide-react';
 
 export default function ResponderDashboard() {
-  const { incidents } = useData() || {};
+  const { incidents, updateIncidentStatus } = useData() || {};
   const { user } = useAuth();
 
   if (!incidents) return null;
 
-  // Mock assignment: show active incidents (in real life this would filter by incident.assignedTo === user.id)
-  const assignedIncidents = incidents.filter(i => i.status !== 'Resolved').slice(0, 3); // Just show top 3 for demo
+  // Show active incidents assigned to this responder
+  const assignedIncidents = incidents.filter(i => i.status !== 'Resolved' && i.assignedTo === user.name);
 
   return (
     <div className="space-y-8 pb-10">
@@ -42,13 +42,22 @@ export default function ResponderDashboard() {
                   <IncidentCard incident={incident} />
                   {/* Action buttons overlay for responders */}
                   <div className="mt-2 flex gap-2">
-                    <button onClick={() => alert('[DEMO] Status changed to En Route')} className="flex-1 py-2 bg-blue-50 text-blue-600 font-bold text-sm rounded-lg hover:bg-blue-100 transition-colors">
+                    <button 
+                      onClick={() => updateIncidentStatus(incident._id, { status: 'En Route' })} 
+                      className="flex-1 py-2 bg-blue-50 text-blue-600 font-bold text-sm rounded-lg hover:bg-blue-100 transition-colors"
+                    >
                       Mark En Route
                     </button>
-                    <button onClick={() => alert('[DEMO] Status changed to On Scene')} className="flex-1 py-2 bg-brand-soft text-brand-accent font-bold text-sm rounded-lg hover:bg-pink-100 transition-colors">
+                    <button 
+                      onClick={() => updateIncidentStatus(incident._id, { status: 'Rescue in Progress' })} 
+                      className="flex-1 py-2 bg-brand-soft text-brand-accent font-bold text-sm rounded-lg hover:bg-pink-100 transition-colors"
+                    >
                       Mark On Scene
                     </button>
-                    <button onClick={() => alert('[DEMO] Status changed to Resolved')} className="flex-1 py-2 bg-emerald-50 text-emerald-600 font-bold text-sm rounded-lg hover:bg-emerald-100 transition-colors">
+                    <button 
+                      onClick={() => updateIncidentStatus(incident._id, { status: 'Resolved' })} 
+                      className="flex-1 py-2 bg-emerald-50 text-emerald-600 font-bold text-sm rounded-lg hover:bg-emerald-100 transition-colors"
+                    >
                       Mark Resolved
                     </button>
                   </div>

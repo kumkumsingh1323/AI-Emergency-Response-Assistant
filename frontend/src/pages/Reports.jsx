@@ -14,6 +14,8 @@ export default function Reports() {
   
   const [loading, setLoading] = useState(false);
   const [successId, setSuccessId] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageError, setImageError] = useState('');
 
   // Form State
   const [formData, setFormData] = useState({
@@ -29,6 +31,29 @@ export default function Reports() {
   });
 
   const handleChange = (e) => setFormData(p => ({ ...p, [e.target.name]: e.target.value }));
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    setImageError('');
+    if (!file) return;
+
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setImageError('Unsupported file format. Please upload JPG, PNG, or WEBP.');
+      return;
+    }
+    
+    // Limit to 2MB for demo purposes (localStorage constraints)
+    if (file.size > 2 * 1024 * 1024) {
+      setImageError('File is too large. Maximum size is 2MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result); // Base64 string
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -56,10 +81,16 @@ export default function Reports() {
         urgency: priority.toUpperCase(),
         reportedBy: formData.contact,
         source: formData.source,
-        coordinates: (formData.lat && formData.lng) ? { lat: parseFloat(formData.lat), lng: parseFloat(formData.lng) } : null
+        coordinates: (formData.lat && formData.lng) ? { lat: parseFloat(formData.lat), lng: parseFloat(formData.lng) } : null,
+        imageUrl: imagePreview // Save base64 string
       });
 
       setSuccessId(newId);
+      setFormData({
+        title: '', incidentType: 'Other', description: '', location: '', lat: '', lng: '', peopleAffected: '', contact: user ? user.email : '', source: 'Text / Website'
+      });
+      setImagePreview(null);
+      setImageError('');
       setLoading(false);
     }, 1200); // Fake network delay
   };
@@ -158,12 +189,29 @@ export default function Reports() {
           </div>
           
           <div className="md:col-span-2">
-            <label className="block text-[10px] font-black text-brand-navy mb-2 uppercase tracking-widest">Attach Evidence (Mock)</label>
-            <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-brand-primary/50 hover:bg-brand-soft/20 transition-all">
-              <UploadCloud size={32} className="text-gray-400 mb-3" />
-              <p className="text-sm font-bold text-brand-navy mb-1">Click to simulate file upload</p>
-              <p className="text-xs text-gray-500 font-medium">Images will not be saved in this demo.</p>
-            </div>
+            <label className="block text-[10px] font-black text-brand-navy mb-2 uppercase tracking-widest">Attach Evidence (Optional)</label>
+            {!imagePreview ? (
+              <label className="border-2 border-dashed border-gray-200 rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-brand-primary/50 hover:bg-brand-soft/20 transition-all">
+                <UploadCloud size={32} className="text-gray-400 mb-3" />
+                <p className="text-sm font-bold text-brand-navy mb-1">Click to upload photo evidence</p>
+                <p className="text-xs text-gray-500 font-medium">Supports JPG, PNG, WEBP (Max 2MB).</p>
+                <input type="file" accept="image/jpeg, image/png, image/webp" className="hidden" onChange={handleImageUpload} />
+              </label>
+            ) : (
+              <div className="relative border-2 border-gray-200 rounded-xl p-2 bg-gray-50 flex flex-col items-center">
+                <img src={imagePreview} alt="Evidence preview" className="w-full max-h-64 object-cover rounded-lg border border-gray-200 shadow-sm" />
+                <div className="absolute top-4 right-4 flex gap-2">
+                  <button type="button" onClick={() => setImagePreview(null)} className="px-3 py-1.5 bg-white text-red-500 text-xs font-bold rounded-lg shadow hover:bg-red-50">
+                    Remove
+                  </button>
+                  <label className="px-3 py-1.5 bg-white text-brand-navy text-xs font-bold rounded-lg shadow hover:bg-gray-100 cursor-pointer">
+                    Replace
+                    <input type="file" accept="image/jpeg, image/png, image/webp" className="hidden" onChange={handleImageUpload} />
+                  </label>
+                </div>
+              </div>
+            )}
+            {imageError && <p className="text-red-500 text-xs font-bold mt-2">{imageError}</p>}
           </div>
         </div>
 
