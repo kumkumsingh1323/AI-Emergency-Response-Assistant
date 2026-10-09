@@ -236,45 +236,8 @@ export default function Analytics() {
             </div>
           </div>
         </div>
-
-        {/* AI Engine Info — honest about what is and isn't real */}
-        <div className="bg-gradient-to-br from-brand-navy to-gray-900 p-8 rounded-3xl shadow-xl text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent/20 rounded-full blur-3xl pointer-events-none" />
-          <h3 className="font-black text-white uppercase tracking-widest text-sm flex items-center gap-2 mb-2 relative z-10">
-            <Clock size={16} className="text-brand-accent" /> AI Engine Status
-          </h3>
-          <div className="inline-flex items-center gap-1.5 bg-amber-500/20 border border-amber-400/30 text-amber-300 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full mb-6 relative z-10">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-            Configuration Required
-          </div>
-
-          <div className="space-y-4 relative z-10">
-            {[
-              { label: 'Gemini API Key', value: 'Not configured (backend/.env)', pct: 0, color: '#ef4444' },
-              { label: 'Backend Connection', value: 'Offline — demo mode active', pct: 0, color: '#f97316' },
-              { label: 'Incident Deduplication', value: 'Available when backend runs', pct: 50, color: '#f9a8d4' },
-              { label: 'Entity Extraction', value: 'Requires GEMINI_API_KEY', pct: 25, color: '#f9a8d4' },
-            ].map(({ label, value, pct, color }) => (
-              <div key={label}>
-                <div className="flex justify-between text-sm font-bold mb-1">
-                  <span className="text-gray-300">{label}</span>
-                  <span style={{ color }}>{value}</span>
-                </div>
-                <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full transition-all duration-700" style={{ width: `${pct}%`, background: color }} />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-6 bg-white/5 border border-white/10 p-4 rounded-2xl relative z-10">
-            <p className="text-xs text-gray-300 font-medium leading-relaxed">
-              To enable AI triage: set <code className="text-brand-primary font-black">GEMINI_API_KEY</code> in <code className="text-brand-primary font-black">backend/.env</code> and run the backend locally.
-              The AI will then extract entities, classify severity, and deduplicate incoming reports.
-            </p>
-          </div>
-        </div>
       </div>
+
     </div>
   );
 }
