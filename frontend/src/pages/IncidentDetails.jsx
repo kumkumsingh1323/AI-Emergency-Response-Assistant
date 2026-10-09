@@ -1,55 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { getIncident, updateIncidentStatus } from '../services/api';
+import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
 import { ArrowLeft, MapPin, Users, ShieldAlert, CheckCircle, Clock, ShieldCheck, MessageSquare, AlertCircle } from 'lucide-react';
 
 export default function IncidentDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [incident, setIncident] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const { incidents, updateIncidentStatus, addReportToIncident } = useData() || {};
   const [updateMsg, setUpdateMsg] = useState('');
 
-  useEffect(() => {
-    fetchIncident();
-  }, [id]);
-
-  const fetchIncident = async () => {
-    try {
-      const data = await getIncident(id);
-      setIncident(data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleStatusUpdate = async (newStatus, verifyStatus = null) => {
-    try {
-      const payload = { status: newStatus };
-      if (verifyStatus) payload.verificationStatus = verifyStatus;
-      
-      await updateIncidentStatus(id, payload);
-      fetchIncident();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleAddUpdate = async (e) => {
-    e.preventDefault();
-    if (!updateMsg.trim()) return;
-    try {
-      await updateIncidentStatus(id, { updateMessage: updateMsg });
-      setUpdateMsg('');
-      fetchIncident();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  if (loading) {
+  if (!incidents || !Array.isArray(incidents)) {
     return (
       <div className="flex flex-col justify-center items-center h-64 text-brand-primary">
         <div className="animate-spin h-10 w-10 border-4 border-brand-primary border-t-transparent rounded-full mb-4"></div>
@@ -57,6 +19,23 @@ export default function IncidentDetails() {
       </div>
     );
   }
+
+  const incident = incidents.find(i => i._id === id);
+
+  const handleStatusUpdate = (newStatus, verifyStatus = null) => {
+    const payload = {};
+    if (newStatus) payload.status = newStatus;
+    if (verifyStatus) payload.verificationStatus = verifyStatus;
+    updateIncidentStatus(id, payload);
+  };
+
+  const handleAddUpdate = (e) => {
+    e.preventDefault();
+    if (!updateMsg.trim()) return;
+    addReportToIncident(id, updateMsg, user ? user.name : 'Unknown User');
+    setUpdateMsg('');
+  };
+
   if (!incident) return <div className="text-center py-20 text-brand-danger font-bold text-2xl">Incident not found</div>;
 
   return (
@@ -94,7 +73,7 @@ export default function IncidentDetails() {
             <div className="flex gap-4">
               {incident.verificationStatus !== 'Verified' && (
                 <button 
-                  onClick={() => handleStatusUpdate(incident.status, 'Verified')}
+                  onClick={() => handleStatusUpdate(null, 'Verified')}
                   className="bg-brand-success/10 hover:bg-brand-success/20 text-brand-success border border-brand-success/30 px-6 py-3 rounded-xl text-sm font-black transition-all hover:shadow-lg hover:shadow-brand-success/20 hover:-translate-y-0.5 flex items-center gap-2 group"
                 >
                   <ShieldCheck size={18} className="group-hover:scale-110 transition-transform" /> Verify
@@ -202,8 +181,24 @@ export default function IncidentDetails() {
               </button>
             </form>
 
-            <h3 className="text-sm font-black text-brand-navy uppercase tracking-widest mb-6">Source Reports</h3>
+            <h3 className="text-sm font-black text-brand-navy uppercase tracking-widest mb-6">Activity Log</h3>
             <div className="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-3">
+              {/* Additional Reports from DataContext */}
+              {incident.additionalReports?.map((report, idx) => (
+                <div key={`add-${idx}`} className="flex gap-4 p-5 bg-white/80 rounded-2xl border border-gray-100 shadow-sm">
+                  <div className="mt-1">
+                    <MessageSquare size={18} className="text-brand-accent" />
+                  </div>
+                  <div>
+                    <p className="text-brand-navy font-medium text-sm">{report.text}</p>
+                    <p className="text-[10px] font-black text-gray-400 mt-2 flex items-center gap-2 uppercase tracking-widest">
+                      <span className="w-1.5 h-1.5 rounded-full bg-brand-primary" /> {report.reportedBy} · {new Date(report.timestamp).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
+
+              {/* Source Reports */}
               {incident.sourceReports?.map((report, idx) => (
                 <div key={idx} className="bg-white/80 p-5 rounded-2xl border border-gray-100 shadow-sm hover:border-brand-primary/30 transition-colors">
                   <div className="flex justify-between items-center mb-3">
@@ -213,6 +208,18 @@ export default function IncidentDetails() {
                   <p className="text-sm text-brand-navy font-medium italic leading-relaxed">"{report.originalMessage}"</p>
                 </div>
               ))}
+
+              <div className="flex gap-4 p-5 bg-white/80 rounded-2xl border border-gray-100 shadow-sm">
+                <div className="mt-1">
+                  <Clock size={18} className="text-gray-400" />
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm font-medium">Incident reported by <span className="font-bold text-brand-navy">{incident.reportedBy || 'Unknown'}</span>.</p>
+                  <p className="text-[10px] font-black text-gray-400 mt-2 flex items-center gap-2 uppercase tracking-widest">
+                    <span className="w-1.5 h-1.5 rounded-full bg-gray-300" /> System · {new Date(incident.createdAt).toLocaleString()}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 

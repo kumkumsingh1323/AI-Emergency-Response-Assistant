@@ -1,36 +1,14 @@
-import { useEffect, useState } from 'react';
-import { getIncidents } from '../services/api';
+import { useState } from 'react';
+import { useData } from '../context/DataContext';
 import IncidentCard from '../components/IncidentCard';
 import { Search, Filter, AlertCircle } from 'lucide-react';
 
 export default function IncidentsList() {
-  const [incidents, setIncidents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { incidents } = useData() || {};
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
 
-  useEffect(() => {
-    const fetchIncidents = async () => {
-      try {
-        const data = await getIncidents();
-        setIncidents(data);
-      } catch (error) {
-        console.error("Failed to fetch incidents", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchIncidents();
-  }, []);
-
-  const filteredIncidents = incidents.filter(incident => {
-    const matchesFilter = filter === 'All' || incident.status === filter;
-    const matchesSearch = incident.location.toLowerCase().includes(search.toLowerCase()) || 
-                          incident.incidentType.toLowerCase().includes(search.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
-
-  if (loading) {
+  if (!incidents || !Array.isArray(incidents)) {
     return (
       <div className="flex flex-col justify-center items-center h-[60vh] text-brand-primary">
         <div className="animate-spin h-12 w-12 border-4 border-brand-primary border-t-transparent rounded-full mb-4"></div>
@@ -38,6 +16,13 @@ export default function IncidentsList() {
       </div>
     );
   }
+
+  const filteredIncidents = incidents.filter(incident => {
+    const matchesFilter = filter === 'All' || incident.status === filter;
+    const matchesSearch = incident.location?.toLowerCase().includes(search.toLowerCase()) || 
+                          incident.incidentType?.toLowerCase().includes(search.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
 
   return (
     <div className="space-y-8 pb-10">

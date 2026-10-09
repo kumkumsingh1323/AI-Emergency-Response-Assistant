@@ -1,37 +1,12 @@
-import { useEffect, useState } from 'react';
-import { getIncidents } from '../services/api';
+import { useData } from '../context/DataContext';
 import IncidentCard from '../components/IncidentCard';
 import MapView from '../components/MapView';
 import { AlertCircle, CheckCircle, Flame, Users, Activity } from 'lucide-react';
 
 export default function Dashboard() {
-  const [incidents, setIncidents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { incidents } = useData() || {};
 
-  useEffect(() => {
-    fetchIncidents();
-    // In a real app, use WebSockets. For hackathon, poll every 10s.
-    const interval = setInterval(fetchIncidents, 10000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchIncidents = async () => {
-    try {
-      const data = await getIncidents();
-      setIncidents(data);
-    } catch (error) {
-      console.error("Failed to fetch incidents", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const activeIncidents = incidents.filter(i => i.status !== 'Resolved');
-  const highUrgency = activeIncidents.filter(i => i.urgency === 'HIGH' || i.urgency === 'CRITICAL');
-  const totalAffected = activeIncidents.reduce((acc, curr) => acc + (curr.peopleAffected || 0), 0);
-  const resolved = incidents.filter(i => i.status === 'Resolved');
-
-  if (loading) {
+  if (!incidents || !Array.isArray(incidents)) {
     return (
       <div className="flex flex-col justify-center items-center h-64 text-brand-primary">
         <div className="animate-spin h-10 w-10 border-4 border-brand-primary border-t-transparent rounded-full mb-4"></div>
@@ -39,6 +14,11 @@ export default function Dashboard() {
       </div>
     );
   }
+
+  const activeIncidents = incidents.filter(i => i.status !== 'Resolved');
+  const highUrgency = activeIncidents.filter(i => i.urgency === 'HIGH' || i.urgency === 'CRITICAL');
+  const totalAffected = activeIncidents.reduce((acc, curr) => acc + (curr.peopleAffected || 0), 0);
+  const resolved = incidents.filter(i => i.status === 'Resolved');
 
   return (
     <div className="space-y-8 pb-10">
