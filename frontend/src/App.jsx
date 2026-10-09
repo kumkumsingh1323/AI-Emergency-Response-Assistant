@@ -31,13 +31,13 @@ function AppLayout({ children }) {
   const { user, logout } = useAuth();
 
   const navItems = [
-    { name: 'Dashboard',     path: '/dashboard',  icon: LayoutDashboard, roles: ['Administrator', 'Control-Room Operator', 'Team Leader', 'Emergency Responder'] },
-    { name: 'Incidents',     path: '/incidents',  icon: AlertTriangle,   roles: ['Administrator', 'Control-Room Operator', 'Team Leader', 'Emergency Responder', 'Citizen'] },
-    { name: 'Submit Report', path: '/reports',    icon: Radio,           roles: ['Administrator', 'Control-Room Operator', 'Citizen'] },
-    { name: 'Map View',      path: '/map',        icon: Map,             roles: ['Administrator', 'Control-Room Operator', 'Team Leader', 'Emergency Responder'] },
-    { name: 'Resources',     path: '/resources',  icon: Truck,           roles: ['Administrator', 'Control-Room Operator', 'Team Leader'] },
-    { name: 'Analytics',     path: '/analytics',  icon: BarChart3,       roles: ['Administrator', 'Control-Room Operator'] },
-    { name: 'Settings',      path: '/settings',   icon: SettingsIcon,    roles: ['Administrator', 'Control-Room Operator', 'Team Leader', 'Emergency Responder', 'Citizen'] },
+    { name: 'Dashboard',     path: '/dashboard',  icon: LayoutDashboard, roles: ['Admin', 'Control Room Operator', 'Team Leader', 'Responder', 'Citizen'] },
+    { name: 'Incidents',     path: '/incidents',  icon: AlertTriangle,   roles: ['Admin', 'Control Room Operator', 'Team Leader', 'Responder', 'Citizen'] },
+    { name: 'Submit Report', path: '/reports',    icon: Radio,           roles: ['Admin', 'Control Room Operator', 'Citizen'] },
+    { name: 'Map View',      path: '/map',        icon: Map,             roles: ['Admin', 'Control Room Operator', 'Team Leader', 'Responder'] },
+    { name: 'Resources',     path: '/resources',  icon: Truck,           roles: ['Admin', 'Control Room Operator', 'Team Leader'] },
+    { name: 'Analytics',     path: '/analytics',  icon: BarChart3,       roles: ['Admin', 'Control Room Operator'] },
+    { name: 'Settings',      path: '/settings',   icon: SettingsIcon,    roles: ['Admin', 'Control Room Operator', 'Team Leader', 'Responder', 'Citizen'] },
   ];
 
   const visibleNavItems = user

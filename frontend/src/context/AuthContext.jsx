@@ -2,11 +2,11 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 // Pre-defined demo accounts
 export const DEMO_ACCOUNTS = {
-  'citizen.demo@example.test': { role: 'Citizen', name: 'Demo Citizen', region: 'All' },
-  'operator.demo@example.test': { role: 'Control-Room Operator', name: 'Demo Operator', region: 'Chennai Metro' },
-  'responder.demo@example.test': { role: 'Emergency Responder', name: 'Demo Responder', region: 'Chennai South' },
-  'leader.demo@example.test': { role: 'Team Leader', name: 'Demo Leader', region: 'Chennai Metro' },
-  'admin.demo@example.test': { role: 'Administrator', name: 'Demo Admin', region: 'All' }
+  'citizen@demo.test': { role: 'Citizen', name: 'Demo Citizen', region: 'All' },
+  'operator@demo.test': { role: 'Control Room Operator', name: 'Demo Operator', region: 'Chennai Metro' },
+  'responder@demo.test': { role: 'Responder', name: 'Demo Responder', region: 'Chennai South' },
+  'leader@demo.test': { role: 'Team Leader', name: 'Demo Leader', region: 'Chennai Metro' },
+  'admin@demo.test': { role: 'Admin', name: 'Demo Admin', region: 'All' }
 };
 
 const AuthContext = createContext();

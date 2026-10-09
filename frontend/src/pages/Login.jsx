@@ -5,7 +5,7 @@ import { ShieldAlert, Eye, EyeOff, Lock, Mail, ChevronRight, Activity, AlertCirc
 
 export default function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('operator.demo@example.test');
+  const [email, setEmail] = useState('operator@demo.test');
   const [password, setPassword] = useState('demo123'); // Demo password
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -33,17 +33,7 @@ export default function Login() {
   };
 
   const redirectUser = (role) => {
-    switch (role) {
-      case 'Citizen':
-        navigate('/reports');
-        break;
-      case 'Emergency Responder':
-      case 'Team Leader':
-        navigate('/incidents');
-        break;
-      default:
-        navigate('/dashboard');
-    }
+    navigate('/dashboard');
   };
 
   const quickLogin = (demoEmail) => {
