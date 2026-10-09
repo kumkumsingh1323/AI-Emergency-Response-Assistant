@@ -29,7 +29,7 @@ export function AuthProvider({ children }) {
       const userData = { email, ...DEMO_ACCOUNTS[email] };
       setUser(userData);
       localStorage.setItem('demo_auth_user', JSON.stringify(userData));
-      return { success: true };
+      return { success: true, role: userData.role };
     }
     return { success: false, error: 'Invalid demo credentials.' };
   };

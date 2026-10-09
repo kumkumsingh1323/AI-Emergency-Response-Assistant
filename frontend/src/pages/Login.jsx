@@ -26,15 +26,31 @@ export default function Login() {
     }
     const result = login(email);
     if (result.success) {
-      navigate('/dashboard');
+      redirectUser(result.role);
     } else {
       setError('User not found. Please use one of the demo emails.');
     }
   };
 
+  const redirectUser = (role) => {
+    switch (role) {
+      case 'Citizen':
+        navigate('/reports');
+        break;
+      case 'Emergency Responder':
+      case 'Team Leader':
+        navigate('/incidents');
+        break;
+      default:
+        navigate('/dashboard');
+    }
+  };
+
   const quickLogin = (demoEmail) => {
-    login(demoEmail);
-    navigate('/dashboard');
+    const result = login(demoEmail);
+    if (result.success) {
+      redirectUser(result.role);
+    }
   };
 
   return (

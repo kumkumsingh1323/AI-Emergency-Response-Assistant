@@ -11,7 +11,7 @@ import Settings from './pages/Settings';
 import ResourceManagement from './pages/ResourceManagement';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
-import { LayoutDashboard, AlertTriangle, Radio, Map, BarChart3, Settings as SettingsIcon, LogOut, Bell, User, Truck } from 'lucide-react';
+import { LayoutDashboard, AlertTriangle, Radio, Map, BarChart3, Settings as SettingsIcon, LogOut, Bell, User, Truck, Search } from 'lucide-react';
 
 function getGreeting() {
   const h = new Date().getHours();
